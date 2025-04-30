@@ -3,6 +3,7 @@ node_modules
 
 *.log
 data
+data/
 public
 .env
 .storybook/dist
