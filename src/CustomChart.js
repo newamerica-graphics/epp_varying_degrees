@@ -34,6 +34,7 @@ export default class CustomChart extends React.Component {
     toPng(targetElement, {
       filter: node => node.tagName != 'BUTTON',
       backgroundColor: 'white',
+      pixelRatio: 3,
       height: targetElement.offsetHeight + 20,
       width: targetElement.offsetWidth + 20,
       style: {
@@ -293,3 +294,4 @@ export default class CustomChart extends React.Component {
     );
   }
 }
+
