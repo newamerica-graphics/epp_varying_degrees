@@ -22,7 +22,8 @@ module.exports = env => {
     plugins: [
       env.deploy === "development" && new webpack.HotModuleReplacementPlugin(),
       new HtmlWebpackPlugin({
-        title: "EPP Varying Degrees 2024",
+        // title: "EPP Varying Degrees 2024",
+        title: "EPP Varying Degrees 2025",
         chartIDs: 
           ["dashboard"],
           // .concat(Array.from(
