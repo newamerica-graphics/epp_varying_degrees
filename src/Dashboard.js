@@ -9,10 +9,12 @@ export default class Dashboard extends React.Component {
     this.state = {
       filter_demographic: this.props.total_demographic,
       filter_finding: this.props.initial_finding,
+      filter_question: this.props.initial_question || null,
     };
 
     this.handleFilterDemographicChange = this.handleFilterDemographicChange.bind(this);
     this.handleFilterFindingChange = this.handleFilterFindingChange.bind(this);
+    this.handleFilterQuestionChange = this.handleFilterQuestionChange.bind(this);
 
     this.data = this.props.data;
     this.demographics = this.props.data.demographic_keys.filter(d => !d.skip_demographic_key)
@@ -28,7 +30,14 @@ export default class Dashboard extends React.Component {
   }
   
   handleFilterFindingChange(finding) {
-    this.setState({filter_finding: finding})
+    this.setState({
+      filter_finding: finding,
+      filter_question: null // reset question filter when finding changes
+    })
+  }
+  
+  handleFilterQuestionChange(question) {
+    this.setState({filter_question: question.target.value})
   }
   
   render() {
@@ -52,6 +61,59 @@ export default class Dashboard extends React.Component {
             className="dv-button-group--findings"
             style="ol"
           />
+          
+          <h4 className="dv-dashboard__nav-heading">Select question</h4>
+          {/* question filter dropdown */}
+          <div className="dv-dashboard__question-filter">
+            <select 
+              className="dv-select"
+              onChange={this.handleFilterQuestionChange}
+              value={this.state.filter_question || ""}
+            >
+              <option value="">All Questions</option>
+              {(() => {
+                // get all questions for the current finding
+                const filteredQuestions = this.props.questions
+                  .filter(q => finding_questions.includes(q.number_specific));
+                
+                // group questions by their prefix (e.g., "3" for "3A", "3B", etc.)
+                const questionGroups = {};
+                filteredQuestions.forEach(q => {
+                  // extract question prefix (e.g., "3" from "3A", "60" from "60A")
+                  // match numeric part of prefix up to the first non-numeric character
+                  const match = q.number_specific.match(/^(\d+)/);
+                  const prefix = match ? match[1] : q.number_specific;
+                  
+                  if (!questionGroups[prefix]) {
+                    questionGroups[prefix] = {
+                      prefix: prefix,
+                      questions: [],
+                      // use first question's content as group title -- some cases where there are multiple dif ones
+                      content: q.content_general
+                    };
+                  }
+                  questionGroups[prefix].questions.push(q);
+                });
+                
+                // convert question groups object to an array and sort by prefix
+                return Object.values(questionGroups)
+                  .sort((a, b) => a.prefix.localeCompare(b.prefix, undefined, {numeric: true}))
+                  .map(group => {
+                    // format dropdown options as: question number - first 80 chars of question title
+                    const questionText = group.content.substring(0, 80) + 
+                      (group.content.length > 80 ? "..." : "");
+                    
+                    return (
+                      <option key={group.prefix} value={group.prefix}>
+                        {group.prefix} - {questionText}
+                      </option>
+                    );
+                  });
+              })()}
+            </select>
+          </div>
+          
+          {/* <h4 className="dv-dashboard__nav-heading">Show breakdown by...</h4> */}
           <h4 className="dv-dashboard__nav-heading">{meta.filter_heading}</h4>
           <ButtonGroup
             onChange={this.handleFilterDemographicChange}
@@ -61,9 +123,20 @@ export default class Dashboard extends React.Component {
           />
         </nav>
         <div className="dv-dashboard__column dv-dashboard__column--data">
+          
           {/* <h2>{selected_finding.finding_title}</h2> */}
           {this.props.questions.map((q) => {
             if(!finding_questions.includes(q.number_specific)) return;
+            
+            //if a question filter is selected, only show questions w exact prefix
+            if(this.state.filter_question) {
+              // extract numeric prefix from current question
+              const match = q.number_specific.match(/^(\d+)/);
+              const prefix = match ? match[1] : q.number_specific;
+              
+              // only show questions w exact prefix
+              if(prefix !== this.state.filter_question) return;
+            }
 
             let is_new_question = q.content_general != previous_question;
             previous_question = q.content_general;

@@ -27,7 +27,7 @@ h1, h2, h3, h4, h5, h6
 	@media screen and (min-width: 800px)
 		height: calc(100vh - 70px - 65px)
 		grid-template-columns: 1fr 2fr
-		grid-gap: 33px
+		grid-gap: 100px
 		overflow: hidden
 		
 	&__column
@@ -50,20 +50,30 @@ h1, h2, h3, h4, h5, h6
 	&__nav-title
 		flex-shrink: 0
 		margin:
-			top: 2rem
-			bottom: 0.5rem
+			top: 1rem
+			bottom: 1rem
 
 	&__nav-heading
 		flex-shrink: 0
 		margin:
-			top: 1rem
+			top: 1.5rem
 			bottom: 0.5rem
 		@media screen and (min-height: 600px)
 			margin:
 				top: 1.5rem
 				bottom: 0.75rem
 		@media screen and (min-height: 700px)
-			margin-top: 2rem
+			margin-top: 1.5rem
+			
+	&__question-filter
+		// margin-top: 1rem
+		// margin-bottom: 1rem
+		padding-right: 1rem
+		width: 100%
+		
+		.dv-select
+			width: 100%
+			font-family: Circular
 
 .dv-button-group
 	$root: &
@@ -151,11 +161,14 @@ h1, h2, h3, h4, h5, h6
 	padding: 1.5rem
 	max-width: 650px
 
+.dv-Chart
+	// font-variant-numeric: tabular-nums
+
 .custom-chart,
 .datawrapper-chart
 	$root: &
 	
-	margin-top: 2rem
+	margin-top: 1.25rem
 	padding-right: 1rem
 
 	&--individual-chart,
@@ -222,6 +235,7 @@ h1, h2, h3, h4, h5, h6
 
 	&:hover
 		color: $color__text
+		cursor: pointer
 
 .vx-tooltip-portal
 	z-index: 1000
