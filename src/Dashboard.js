@@ -90,6 +90,8 @@ export default class Dashboard extends React.Component {
                       questions: [],
                       // use first question's content as group title -- some cases where there are multiple dif ones
                       content: q.content_general
+                      // use question content summary
+                      // content: q.content_summary
                     };
                   }
                   questionGroups[prefix].questions.push(q);
@@ -102,10 +104,15 @@ export default class Dashboard extends React.Component {
                     // format dropdown options as: question number - first 80 chars of question title
                     const questionText = group.content.substring(0, 80) + 
                       (group.content.length > 80 ? "..." : "");
+
+                    // show short content summaries instead
+                    // const questionText = group.content;
                     
                     return (
                       <option key={group.prefix} value={group.prefix}>
-                        {group.prefix} - {questionText}
+                        {/* {group.prefix} - {questionText} */}
+                        {/* try removing question prefix */}
+                        {questionText} 
                       </option>
                     );
                   });
